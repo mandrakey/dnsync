@@ -1,0 +1,12 @@
+{
+    "remotes": ["127.0.0.1", "1.2.3.4"],
+    "port": 53001,
+    "host": "0.0.0.0",
+    "handlers": [
+        {
+            "type": "bind",
+            "config-dir": "config1",
+            "zonefiles-path": "path1"
+        }
+    ]
+}
