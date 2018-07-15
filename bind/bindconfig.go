@@ -92,7 +92,7 @@ func (bc *BindConfig) GetZone(name string) *Zone {
     return CopyZone(o)
 }
 
-func (bc *BindConfig) ToString() string {
+func (bc *BindConfig) String() string {
     res := make([]string, 0)
 
     for _, zone := range bc.zones {

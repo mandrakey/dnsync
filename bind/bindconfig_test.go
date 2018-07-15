@@ -6,8 +6,8 @@ import (
 
 func TestBindConfigLoad(t *testing.T) {
     bc := NewBindConfig()
-    bc.Load("./test.conf")
-    out := bc.ToString()
+    bc.Load("./bindconfig_test.conf")
+    out := bc.String()
     expected := "Zone = { name: 'mjui.de', masters: [ 88.99.47.253 ], file: \"/etc/bind/db.mjui.de\" };\n" +
         "Zone = { name: 'dau.fun', masters: [ 88.99.47.253 ], file: \"/etc/bind/db.dau.fun\" };\n"
 
@@ -19,8 +19,8 @@ func TestBindConfigLoad(t *testing.T) {
 func TestBindConfigSave(t *testing.T) {
     bc := NewBindConfig()
     bc2 := NewBindConfig()
-    file1 := "./test.conf"
-    file2 := "./test2.conf"
+    file1 := "./bindconfig_test.conf"
+    file2 := "./bindconfig_test2.conf"
 
     if !bc.Equals(bc2) {
         t.Fatal("empty bind config instances should be equal")
