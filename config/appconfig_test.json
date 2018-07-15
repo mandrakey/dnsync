@@ -5,7 +5,7 @@
     "handlers": [
         {
             "type": "bind",
-            "config-dir": "config1",
+            "config-file": "config1",
             "zonefiles-path": "path1"
         }
     ]

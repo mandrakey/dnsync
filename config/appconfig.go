@@ -3,6 +3,7 @@ package config
 import (
     "os"
     "fmt"
+    "strings"
     "encoding/json"
 )
 
@@ -17,13 +18,34 @@ type AppConfig struct {
 }
 
 type Handler struct {
+    Name string
 	Type string
-	BindHandler
+    BindHandler
 }
 
 type BindHandler struct {
-	BindConfigDir string `json:"config-dir"`
+	BindConfigFile string `json:"config-file"`
 	BindZonefilesPath string `json:"zonefiles-path"`
+}
+
+func (h *Handler) UnmarshalJSON(rawdata []byte) error {
+    data := make(map[string]string)
+    err := json.Unmarshal(rawdata, &data); if err != nil {
+        return err
+    }
+
+    h.Name = data["name"]
+    h.Type = data["type"]
+
+    // BindHandler stuff
+    v, ok := data["config-file"]; if ok {
+        h.BindConfigFile = strings.TrimSuffix(v, "/")
+    }
+    v, ok = data["zonefiles-path"]; if ok {
+        h.BindZonefilesPath = strings.TrimSuffix(v, "/")
+    }
+
+    return nil
 }
 
 var instance *AppConfig

@@ -35,8 +35,8 @@ func TestLoadFromFile(t *testing.T) {
     if ac.Handlers[0].Type != "bind" {
         t.Fatalf("First handler type is not bind")
     }
-    if ac.Handlers[0].BindConfigDir != "config1" {
-        t.Fatalf("First handler bind config-dir is not config1")
+    if ac.Handlers[0].BindConfigFile != "config1" {
+        t.Fatalf("First handler bind config-file is not config1")
     }
     if ac.Handlers[0].BindZonefilesPath != "path1" {
         t.Fatalf("First handler bind zonefiles-path is not path1")
