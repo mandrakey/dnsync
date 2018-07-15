@@ -9,6 +9,7 @@ import (
     "syscall"
 
     "mandrakey.cc/dnsync/config"
+    "mandrakey.cc/dnsync/handler"
 
     "github.com/urfave/cli"
     "github.com/miekg/dns"
@@ -105,7 +106,13 @@ func handlePacket(data []byte, raddr *net.UDPAddr) {
     soa := msg.Answer[0].(*dns.SOA)
     fmt.Printf("Received notify for %s\n", soa.Hdr.Name)
 
-    // todo: Pass on to handlers to manipulate config files and reload stuff as necessary
+    cfg := config.AppConfigInstance()
+    for _, h := range(cfg.Handlers) {
+        if cfg.Verbose {
+            fmt.Println("Processing message for", h.Name)
+        }
+        handler.HandleMessage(&h, &msg, raddr)
+    }
 
     // Send response
     res := dns.Msg{}
