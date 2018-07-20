@@ -73,3 +73,10 @@ func (ac *AppConfig) LoadFromFile(file string) error {
 
     return nil
 }
+
+func (ac *AppConfig) String() string {
+    res, err := json.Marshal(ac); if err != nil {
+        return fmt.Sprintf("Failed to marshal AppConfig to JSON: %s", err)
+    }
+    return string(res)
+}
