@@ -29,7 +29,7 @@ func handleMessageBind(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr
     domain := strings.TrimSuffix(msg.Answer[0].Header().Name, ".")
     zone := bind.Zone{
         Name: domain,
-        Masters: []string{string(raddr.IP)},
+        Masters: []string{raddr.IP.String()},
         File: fmt.Sprintf("%s/%s.host", handler.BindZonefilesPath, domain),
     }
 
