@@ -11,6 +11,7 @@ type AppConfig struct {
     ConfigFile string
     Remotes []string
     Verbose bool
+    Logfile string
     Simulation bool
     Port int
     Host string

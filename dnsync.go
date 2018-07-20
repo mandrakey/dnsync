@@ -15,15 +15,15 @@ import (
     "github.com/miekg/dns"
 )
 
+const AppVersion = "1.0.0"
+
 var configFile string = "./dnsync.json"
 
 func main() {
-    // todo: Set up logging and replace all those printf-calls with debug/info/error output
-
     app := cli.NewApp()
     app.Name = "dnsync"
     app.Usage = "DNS meta synchronizer"
-    app.Version = "1.0.0-alpha"
+    app.Version = AppVersion
     app.Flags = []cli.Flag{
         cli.StringFlag{
             Name: "config, c",
@@ -48,8 +48,16 @@ func actionRun(c *cli.Context) error {
     }
     cfg.ConfigFile = configFile
 
+    // Setup logging
+    config.SetupLogging(cfg.Logfile)
+    log := config.Logger()
+    log.Noticef("This is dnsync v.%s", AppVersion)
+    fmt.Printf("This is dnsync v.%s\n", AppVersion)
+    fmt.Println("Copyright (C) 2018 Maurice Bleuel")
+    fmt.Println("Licensed under the MIT license.\n")
+
     if cfg.Verbose {
-        fmt.Printf("Loaded config:\n%s\n", cfg.String())
+        log.Debugf("Loaded config:\n%s", cfg.String())
     }
 
     // Create UDP socket
@@ -65,6 +73,7 @@ func actionRun(c *cli.Context) error {
     signal.Notify(sigc, syscall.SIGINT)
     signal.Notify(sigc, syscall.SIGTERM)
 
+    log.Infof("Listening on %s", addr.String())
     fmt.Printf("Listening on %s\n", addr.String())
     buf := make([]byte, 4096)
 
@@ -74,7 +83,7 @@ func actionRun(c *cli.Context) error {
         n, raddr, _ := conn.ReadFromUDP(buf)
 
         if n > 0 {
-            fmt.Printf("Read %d bytes from %s:\n", n, raddr.String())
+            log.Debugf("Read %d bytes from %s", n, raddr.String())
             go handlePacket(buf, raddr)
         }
 
@@ -82,7 +91,7 @@ func actionRun(c *cli.Context) error {
         select {
         case sig := <-sigc:
             if sig == syscall.SIGINT || sig == syscall.SIGTERM {
-                fmt.Println("Shutting down.")
+                log.Infof("Shutting down.")
                 break loop
             }
 
@@ -95,25 +104,27 @@ func actionRun(c *cli.Context) error {
 }
 
 func handlePacket(data []byte, raddr *net.UDPAddr) {
+    log := config.Logger()
+
     msg := dns.Msg{}
     err := msg.Unpack(data); if err != nil {
-        fmt.Printf("Failed to unpack packet: %s\n", err)
+        log.Errorf("Failed to unpack packet: %s", err)
         return
     }
 
     if msg.MsgHdr.Opcode != dns.OpcodeNotify || msg.Answer[0].Header().Rrtype != dns.TypeSOA {
         // invalid request, not a notify
-        fmt.Printf("Skip invalid notify")
+        log.Info("Skip invalid notify")
         return
     }
 
     soa := msg.Answer[0].(*dns.SOA)
-    fmt.Printf("Received notify for %s\n", soa.Hdr.Name)
+    log.Infof("Received notify for %s", soa.Hdr.Name)
 
     cfg := config.AppConfigInstance()
     for _, h := range(cfg.Handlers) {
         if cfg.Verbose {
-            fmt.Println("Processing message for", h.Name)
+            log.Debugf("Processing message for %s", h.Name)
         }
         handler.HandleMessage(&h, &msg, raddr)
     }
@@ -121,7 +132,7 @@ func handlePacket(data []byte, raddr *net.UDPAddr) {
     // Send response
     res := dns.Msg{}
     res.SetReply(&msg)
-    fmt.Printf("Sending reply to %s:%d", raddr.IP, raddr.Port)
+    log.Debugf("Sending reply to %s:%d", raddr.IP, raddr.Port)
 
     c := dns.Client{}
     c.Exchange(&res, fmt.Sprintf("%s:%d", raddr.IP, raddr.Port))
