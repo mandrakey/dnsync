@@ -48,6 +48,10 @@ func actionRun(c *cli.Context) error {
     }
     cfg.ConfigFile = configFile
 
+    if cfg.Verbose {
+        fmt.Printf("Loaded config:\n%s\n", cfg.String())
+    }
+
     // Create UDP socket
     addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)); if err != nil {
         return err
@@ -117,7 +121,7 @@ func handlePacket(data []byte, raddr *net.UDPAddr) {
     // Send response
     res := dns.Msg{}
     res.SetReply(&msg)
-    fmt.Printf("Sending reply to %s:%d:\n%s", raddr.IP, raddr.Port, res.String())
+    fmt.Printf("Sending reply to %s:%d", raddr.IP, raddr.Port)
 
     c := dns.Client{}
     c.Exchange(&res, fmt.Sprintf("%s:%d", raddr.IP, raddr.Port))
