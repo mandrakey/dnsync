@@ -54,7 +54,7 @@ func actionRun(c *cli.Context) error {
     log.Noticef("This is dnsync v.%s", AppVersion)
     fmt.Printf("This is dnsync v.%s\n", AppVersion)
     fmt.Println("Copyright (C) 2018 Maurice Bleuel")
-    fmt.Println("Licensed under the MIT license.\n")
+    fmt.Println("Licensed under the MIT license.")
 
     if cfg.Verbose {
         log.Debugf("Loaded config:\n%s", cfg.String())
@@ -126,7 +126,9 @@ func handlePacket(data []byte, raddr *net.UDPAddr) {
         if cfg.Verbose {
             log.Debugf("Processing message for %s", h.Name)
         }
-        handler.HandleMessage(&h, &msg, raddr)
+        err = handler.HandleMessage(&h, &msg, raddr); if err != nil {
+            log.Error(err)
+        }
     }
 
     // Send response

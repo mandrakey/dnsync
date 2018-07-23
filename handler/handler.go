@@ -16,8 +16,11 @@ const (
 )
 
 func HandleMessage(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) error {
+    log := config.Logger()
+
     switch handler.Type {
     case HANDLER_BIND:
+        log.Debug("Handling BIND message")
         return handleMessageBind(handler, msg, raddr)
 
     default:
@@ -26,27 +29,23 @@ func HandleMessage(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) er
 }
 
 func handleMessageBind(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) error {
+    log := config.Logger()
+
     domain := strings.TrimSuffix(msg.Answer[0].Header().Name, ".")
     zone := bind.Zone{
         Name: domain,
         Masters: []string{raddr.IP.String()},
         File: fmt.Sprintf("%s/%s.host", handler.BindZonefilesPath, domain),
     }
-
-    cfg := config.AppConfigInstance()
+    log.Debugf("Handling BIND message for '%s':\n%s", domain, zone.String())
 
     bc := bind.NewBindConfig()
     bc.Load(handler.BindConfigFile)
-    if cfg.Verbose {
-        fmt.Printf("Current slave zones:%s\n", bc.String())
-    }
+    log.Debugf("Current slave zones: %s", bc.String())
 
     bc.AddZone(&zone)
-    if cfg.Verbose {
-        fmt.Printf("New slave zones:\n%s", bc.String())
-    }
+    log.Debugf("New slave zones: %s", bc.String())
 
     bc.Save(handler.BindConfigFile)
-
     return nil
 }
