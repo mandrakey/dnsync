@@ -65,3 +65,11 @@ func TestZoneEquals(t *testing.T) {
         t.Fatal("different zone files but zones are equal")
     }
 }
+
+func TestZoneString(t *testing.T) {
+    z := &Zone{Name: "domain.tld", Masters: []string{"1.2.3.4", "5.6.7.8"}, File: "somefile"}
+
+    if z.String() != "zone{Name: 'domain.tld', Masters: [1.2.3.4 5.6.7.8], File: somefile}" {
+        t.Fatalf("Zone string output is wrong")
+    }
+}

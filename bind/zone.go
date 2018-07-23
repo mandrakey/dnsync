@@ -1,6 +1,8 @@
 package bind
 
 import (
+    "fmt"
+
     "mandrakey.cc/dnsync/tools"
 )
 
@@ -30,4 +32,8 @@ func (z *Zone) Equals(other *Zone) bool {
     }
 
     return true
+}
+
+func (z *Zone) String() string {
+    return fmt.Sprintf("zone{Name: '%s', Masters: %s, File: %s}", z.Name, z.Masters, z.File)
 }
