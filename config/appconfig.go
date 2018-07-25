@@ -12,6 +12,7 @@ type AppConfig struct {
     Remotes []string
     Verbose bool
     Logfile string
+    Loglevel string
     Simulation bool
     Port int
     Host string
@@ -53,7 +54,7 @@ var instance *AppConfig
 
 func AppConfigInstance() *AppConfig {
     if instance == nil {
-        instance = &AppConfig{}
+        instance = &AppConfig{Loglevel: "info"}
     }
     return instance
 }

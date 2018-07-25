@@ -20,8 +20,9 @@ func SetupLogging(logfile string) {
         backend = logging.NewLogBackend(os.Stdout, "", 0)
     }
 
+    cfg := AppConfigInstance()
     realBackend := logging.AddModuleLevel(logging.NewBackendFormatter(backend, logFormat))
-    realBackend.SetLevel(logging.DEBUG, "")
+    realBackend.SetLevel(stringToLoglevel(cfg.Loglevel), "")
     logging.SetBackend(realBackend)
 
     if fperr != nil {
@@ -31,4 +32,13 @@ func SetupLogging(logfile string) {
 
 func Logger() *logging.Logger {
     return logger
+}
+
+func stringToLoglevel(s string) logging.Level {
+    l, err := logging.LogLevel(s)
+    if err == nil {
+        return l
+    } else {
+        return logging.INFO
+    }
 }
