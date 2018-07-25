@@ -1,0 +1,16 @@
+{
+    "remotes": ["127.0.0.1"],
+    "port": 53001,
+    "host": "0.0.0.0",
+    "verbose": false,
+    "logfile": "/var/log/dnsync.log",
+    "loglevel": "info",
+    "handlers": [
+        {
+            "name": "bind",
+            "type": "bind",
+            "config-file": "/etc/bind/dnsync.conf.local",
+            "zonefiles-path": "/var/lib/bind/"
+        }
+    ]
+}
