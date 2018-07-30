@@ -1,3 +1,9 @@
+/* This file is part of DNSync.
+ *
+ * Copyright (C) 2018 Maurice Bleuel <mandrakey@bleuelmedia.com>
+ * Licensed undert the simplified BSD license. For further details see COPYING.
+ */
+
 package main
 
 import (
@@ -40,6 +46,7 @@ func main() {
     }
 }
 
+// Run action that reads the config, starts the listening server and sets up signal catching.
 func actionRun(c *cli.Context) error {
     // Load config
     cfg := config.AppConfigInstance()
@@ -103,6 +110,9 @@ func actionRun(c *cli.Context) error {
     return nil
 }
 
+// Method to handle incoming DNS packets. Only packets with opcode NOTIFY and type SOA will be handled, everything
+// else will be discarded. If a valid packet is found, it is sent to every registered handler to work with it. After
+// all handlers have finished processing, a DNS reply packet will be sent to the client before the connection is closed.
 func handlePacket(data []byte, raddr *net.UDPAddr) {
     log := config.Logger()
 

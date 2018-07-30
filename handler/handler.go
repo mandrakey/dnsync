@@ -1,3 +1,9 @@
+/* This file is part of DNSync.
+ *
+ * Copyright (C) 2018 Maurice Bleuel <mandrakey@bleuelmedia.com>
+ * Licensed undert the simplified BSD license. For further details see COPYING.
+ */
+
 package handler
 
 import (
@@ -15,6 +21,8 @@ const (
     HANDLER_BIND = "bind"
 )
 
+// Takes a handler configuration, a DNS message packet and a UDP address struct denoting the client. The strategy
+// for handling the packet will be determined using the Handler.Type field. Currently, only BIND is supported.
 func HandleMessage(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) error {
     log := config.Logger()
 
@@ -28,6 +36,8 @@ func HandleMessage(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) er
     }
 }
 
+// Handles a DNS NOTIFY packet for a bind nameserver: The zone will be constructed and, if necessary, added to
+// the bind dnsync configuration file.
 func handleMessageBind(handler *config.Handler, msg *dns.Msg, raddr *net.UDPAddr) error {
     log := config.Logger()
 

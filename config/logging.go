@@ -1,3 +1,9 @@
+/* This file is part of DNSync.
+ *
+ * Copyright (C) 2018 Maurice Bleuel <mandrakey@bleuelmedia.com>
+ * Licensed undert the simplified BSD license. For further details see COPYING.
+ */
+
 package config
 
 import (
@@ -11,6 +17,7 @@ var (
     logFormat = logging.MustStringFormatter(`[%{time:2006-01-02 15:04:05}] %{level} %{message}`)
 )
 
+// Set up the logging subsystem and have it log to the provided logfile.
 func SetupLogging(logfile string) {
     var backend logging.Backend
     fp, fperr := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -30,10 +37,12 @@ func SetupLogging(logfile string) {
     }
 }
 
+// Get the global Logger instance.
 func Logger() *logging.Logger {
     return logger
 }
 
+// Parse a given string s into a useable log level value.
 func stringToLoglevel(s string) logging.Level {
     l, err := logging.LogLevel(s)
     if err == nil {
