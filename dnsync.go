@@ -116,6 +116,11 @@ func actionRun(c *cli.Context) error {
 func handlePacket(data []byte, raddr *net.UDPAddr) {
     log := config.Logger()
 
+    if !validRemote(string(raddr.IP)) {
+        log.Infof("Discard packet from invalid remote address %s", raddr.IP)
+        return
+    }
+
     msg := dns.Msg{}
     err := msg.Unpack(data); if err != nil {
         log.Errorf("Failed to unpack packet: %s", err)
@@ -148,4 +153,15 @@ func handlePacket(data []byte, raddr *net.UDPAddr) {
 
     c := dns.Client{}
     c.Exchange(&res, fmt.Sprintf("%s:%d", raddr.IP, raddr.Port))
+}
+
+// Checks whether or not a given ip address is in the list of configured remotes.
+func validRemote(ip string) bool {
+    cfg := config.AppConfigInstance()
+    for _, r := range cfg.Remotes {
+        if r == ip {
+            return true
+        }
+    }
+    return false
 }
