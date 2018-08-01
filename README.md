@@ -18,4 +18,3 @@ Since this is a Go application, deployment is rather easy:
 What still needs to be done:
 
 * More nameserver implementations
-* Actually dismiss data when it does not come from a known source
