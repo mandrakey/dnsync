@@ -19,24 +19,16 @@ type BindConfig struct {
     zones map[string]*Zone
 }
 
-var rxZone *regexp.Regexp
-var rxEnd *regexp.Regexp
-var rxMastersBegin *regexp.Regexp
-var rxFile *regexp.Regexp
-var rxMaster *regexp.Regexp
+var (
+    rxZone = regexp.MustCompile("^zone \"(.+)\" \\{")
+    rxEnd = regexp.MustCompile("\\};")
+    rxMastersBegin = regexp.MustCompile("masters \\{")
+    rxFile = regexp.MustCompile("file \"(.+)\";")
+    rxMaster = regexp.MustCompile("(\\S+);")
+)
 
-// Creates a new empty BindConfig instance and returns a pointer to it. Note: This function should be used to
-// generate BindConfig instances, as it also prepares the regular expressions necessary for parsing.
-// todo: Find a better place for compiling the regular expressions ...
+// Creates a new empty BindConfig instance and returns a pointer to it.
 func NewBindConfig() *BindConfig {
-    if rxZone == nil {
-        rxZone = regexp.MustCompile("^zone \"(.+)\" \\{")
-        rxEnd = regexp.MustCompile("\\};")
-        rxMastersBegin = regexp.MustCompile("masters \\{")
-        rxFile = regexp.MustCompile("file \"(.+)\";")
-        rxMaster = regexp.MustCompile("(\\S+);")
-    }
-
     return &BindConfig{zones: make(map[string]*Zone)}
 }
 
