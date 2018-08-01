@@ -14,8 +14,8 @@ import (
     "os/signal"
     "syscall"
 
-    "mandrakey.cc/dnsync/config"
-    "mandrakey.cc/dnsync/handler"
+    "mandrakey.cf/dnsync/config"
+    "mandrakey.cf/dnsync/handler"
 
     "github.com/urfave/cli"
     "github.com/miekg/dns"
