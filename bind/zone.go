@@ -9,7 +9,7 @@ package bind
 import (
     "fmt"
 
-    "mandrakey.cf/dnsync/tools"
+    "github.com/mandrakey/dnsync/tools"
 )
 
 // Represents a bind domain zone.

@@ -13,8 +13,8 @@ import (
 
     "github.com/miekg/dns"
 
-    "mandrakey.cf/dnsync/bind"
-    "mandrakey.cf/dnsync/config"
+    "github.com/mandrakey/dnsync/bind"
+    "github.com/mandrakey/dnsync/config"
 )
 
 const (
