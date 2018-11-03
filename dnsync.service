@@ -1,0 +1,13 @@
+[Unit]
+Description=The DNS server meta synchronizer
+After=network.target
+
+[Service]
+ExecStart=/opt/dnsync/dnsync -c /opt/dnsync/dnsync.json
+Restart=always
+PIDFile=/var/run/dnsync.pid
+User=dnsync
+ProtectSystem=true
+
+[Install]
+WantedBy=default.target
